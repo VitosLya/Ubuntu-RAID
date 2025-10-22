@@ -1,16 +1,16 @@
 # ОТЧЕТ: Команды для RAID и создания разделов
 
-### 1. Создание RAID 1
-```bash
+#Создание RAID 1
+``bash
 sudo mdadm --create --verbose /dev/md0 -l 1 -n 2 /dev/sdb /dev/sdc
 
-# "Ломаем" диск
+#"Ломаем" диск
 sudo mdadm /dev/md0 --fail /dev/sde
 
-# Удаляем "сломанный" диск
+#Удаляем сломанный диск
 sudo mdadm /dev/md0 --remove /dev/sde
 
-# Добавляем диск обратно (чиним RAID)
+#Добавляем диск обратно
 sudo mdadm /dev/md0 --add /dev/sde
 
 #Создание GPT таблицы
@@ -27,6 +27,8 @@ sudo parted /dev/md0 mkpart primary ext4 80% 100%
 for i in {1..5}; do sudo mkfs.ext4 /dev/md0p$i; done
 
 #Монтирование разделов
+mkdir -p /raid/part{1,2,3,4,5}
+for i in $(seq 1 5); do mount /dev/md0p$i /raid/part$i; done
 sudo mkdir -p /raid/part{1,2,3,4,5}
 
 for i in {1..5}; do sudo mount /dev/md0p$i /raid/part$i; done
